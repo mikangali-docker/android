@@ -1,6 +1,6 @@
 FROM beevelop/java
 
-MAINTAINER Maik Hummel <m@ikhummel.com>
+MAINTAINER Michael <mike@mikangali.com>
 
 ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linux.zip" \
     ANDROID_BUILD_TOOLS_VERSION=25.0.2 \
@@ -8,12 +8,30 @@ ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linu
     ANT_HOME="/usr/share/ant" \
     MAVEN_HOME="/usr/share/maven" \
     GRADLE_HOME="/usr/share/gradle" \
-    ANDROID_HOME="/opt/android"
+    ANDROID_HOME="/opt/android" \
+    JAVA_HOME="/usr/lib/jvm/java-8-oracle"
 
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION:$ANT_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin
 
 WORKDIR /opt
 
+# Instal java	
+	
+RUN buildDeps='software-properties-common'; \
+    set -x && \
+    apt-get update && apt-get install -y $buildDeps --no-install-recommends && \
+
+    # use WebUpd8 PPA
+    add-apt-repository ppa:webupd8team/java -y && \
+    apt-get update -y && \
+
+    # automatically accept the Oracle license
+    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
+    apt-get install -y oracle-java8-installer && \
+    apt-get install -y oracle-java8-set-default
+	    
+# Instal android	
+    
 RUN dpkg --add-architecture i386 && \
     apt-get -qq update && \
     apt-get -qq install -y wget curl maven ant gradle libncurses5:i386 libstdc++6:i386 zlib1g:i386 && \
@@ -28,5 +46,5 @@ RUN dpkg --add-architecture i386 && \
 
     # Clean up
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    apt-get autoremove -y && \
-    apt-get clean
+    apt-get purge -y --auto-remove $buildDeps && \
+    apt-get autoremove -y && apt-get clean
