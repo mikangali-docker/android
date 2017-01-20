@@ -1,4 +1,4 @@
-FROM beevelop/java
+FROM ubuntu:16.04
 
 MAINTAINER Michael <mike@mikangali.com>
 
