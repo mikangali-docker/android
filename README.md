@@ -1,6 +1,10 @@
 
-# Android 7 (SDK 25.X)
-### based on [beevelop/java](https://github.com/beevelop/docker-java)
+# Android Docker image
+
+[![Docker build](https://img.shields.io/docker/automated/mikangali/android.svg)]()
+
+### Android 7 (SDK 25.X)
+
 - Ant 1.9.6
 - Maven 3.3.9
 - Java 1.8.0_111
