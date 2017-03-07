@@ -4,7 +4,7 @@ MAINTAINER Michael <mike@mikangali.com>
 
 ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linux.zip" \
     ANDROID_BUILD_TOOLS_VERSION=25.0.2 \
-    ANDROID_APIS="android-10,android-15,android-19,android-21,android-23,android-22,android-24,android-25" \
+    ANDROID_APIS="android-10,android-15,android-19,android-21,android-22,android-23,android-24,android-25" \
     ANT_HOME="/usr/share/ant" \
     MAVEN_HOME="/usr/share/maven" \
     GRADLE_HOME="/usr/share/gradle" \
@@ -12,6 +12,12 @@ ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linu
     JAVA_HOME="/usr/lib/jvm/java-8-oracle"
 
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION:$ANT_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin
+
+# License Id: android-sdk-license-ed0d0a5b
+ENV ANDROID_COMPONENTS platform-tools,build-tools-${ANDROID_BUILD_TOOLS_VERSION},${ANDROID_APIS}
+
+# License Id: android-sdk-license-5be876d5
+ENV GOOGLE_COMPONENTS extra-android-m2repository,extra-google-m2repository
 
 WORKDIR /opt
 
@@ -40,7 +46,10 @@ RUN dpkg --add-architecture i386 && \
     mkdir android && cd android && \
     wget -O tools.zip ${ANDROID_SDK_URL} && \
     unzip tools.zip && rm tools.zip && \
-    echo y | android update sdk -a -u -t platform-tools,extra-android-m2repository,${ANDROID_APIS},build-tools-${ANDROID_BUILD_TOOLS_VERSION} && \
+    
+    echo y | android update sdk --no-ui --all --filter "${ANDROID_COMPONENTS}" ; \
+    echo y | android update sdk --no-ui --all --filter "${GOOGLE_COMPONENTS}" && \
+    
     chmod a+x -R $ANDROID_HOME && \
     chown -R root:root $ANDROID_HOME && \
 
