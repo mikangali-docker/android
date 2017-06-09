@@ -56,7 +56,7 @@ RUN dpkg --add-architecture i386 && \
 
 # Instal Fastlane
 
-RUN apt-get install build-essential && \
+RUN apt-get install -y build-essential && \
     apt-get install -y ruby-dev && \    
     gem install fastlane -NV -v ${FASTLANE_VERSION} && \
     
