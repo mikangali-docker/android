@@ -52,16 +52,16 @@ RUN dpkg --add-architecture i386 && \
     echo y | android update sdk --no-ui --all --filter "${GOOGLE_COMPONENTS}" && \
     
     chmod a+x -R $ANDROID_HOME && \
-    chown -R root:root $ANDROID_HOME && \
+    chown -R root:root $ANDROID_HOME
 
-# Instal Fastlane
+# Install Fastlane
 
 RUN apt-get install -y build-essential && \
     apt-get install -y ruby-dev && \    
     gem install fastlane -NV -v ${FASTLANE_VERSION} && \
     
 
-    # Clean up
+# Clean up
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     apt-get purge -y --auto-remove $buildDeps && \
     apt-get autoremove -y && apt-get clean
