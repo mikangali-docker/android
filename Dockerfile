@@ -9,7 +9,8 @@ ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linu
     MAVEN_HOME="/usr/share/maven" \
     GRADLE_HOME="/usr/share/gradle" \
     ANDROID_HOME="/opt/android" \
-    JAVA_HOME="/usr/lib/jvm/java-8-oracle"
+    JAVA_HOME="/usr/lib/jvm/java-8-oracle" \
+    FASTLANE_VERSION="2.37.0"
 
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION:$ANT_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin
 
@@ -52,6 +53,13 @@ RUN dpkg --add-architecture i386 && \
     
     chmod a+x -R $ANDROID_HOME && \
     chown -R root:root $ANDROID_HOME && \
+
+# Instal Fastlane
+
+RUN apt-get install build-essential && \
+    apt-get install -y ruby-dev && \    
+    gem install fastlane -NV -v ${FASTLANE_VERSION} && \
+    
 
     # Clean up
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
