@@ -10,7 +10,7 @@ ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linu
     GRADLE_HOME="/usr/share/gradle" \
     ANDROID_HOME="/opt/android" \
     JAVA_HOME="/usr/lib/jvm/java-8-oracle" \
-    FASTLANE_VERSION="2.37.0"
+    FASTLANE_VERSION="2.54.2"
 
 ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION:$ANT_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin
 
