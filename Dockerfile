@@ -1,68 +1,56 @@
+# Android sdk image
+# Inspired by - https://github.com/thyrlian/AndroidSDK
+
 FROM ubuntu:16.04
 
-MAINTAINER Michael <mike@mikangali.com>
+# Author
+LABEL maintainer <mike@mikangali.com>
 
-ENV ANDROID_SDK_URL="https://dl.google.com/android/repository/tools_r25.2.3-linux.zip" \
-    ANDROID_BUILD_TOOLS_VERSION=25.0.2 \
-    ANDROID_APIS="android-10,android-15,android-19,android-21,android-22,android-23,android-24,android-25" \
-    ANT_HOME="/usr/share/ant" \
-    MAVEN_HOME="/usr/share/maven" \
-    GRADLE_HOME="/usr/share/gradle" \
-    ANDROID_HOME="/opt/android" \
-    JAVA_HOME="/usr/lib/jvm/java-8-oracle" \
-    FASTLANE_VERSION="2.54.2"
-
-ENV PATH $PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION:$ANT_HOME/bin:$MAVEN_HOME/bin:$GRADLE_HOME/bin
-
-# License Id: android-sdk-license-ed0d0a5b
-ENV ANDROID_COMPONENTS platform-tools,build-tools-${ANDROID_BUILD_TOOLS_VERSION},${ANDROID_APIS}
-
-# License Id: android-sdk-license-5be876d5
-ENV GOOGLE_COMPONENTS extra-android-m2repository,extra-google-m2repository
-
-WORKDIR /opt
-
-# Instal java	
-	
-RUN buildDeps='software-properties-common'; \
-    set -x && \
-    apt-get update && apt-get install -y $buildDeps --no-install-recommends && \
-
-    # use WebUpd8 PPA
-    add-apt-repository ppa:webupd8team/java -y && \
-    apt-get update -y && \
-
-    # automatically accept the Oracle license
-    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    apt-get install -y oracle-java8-set-default && \
-    apt-get install -y git
-	    
-# Instal android	
-    
+# support multiarch: i386 architecture
+# install Java
+# install essential tools
+# install Qt
 RUN dpkg --add-architecture i386 && \
-    apt-get -qq update && \
-    apt-get -qq install -y wget curl maven ant gradle libncurses5:i386 libstdc++6:i386 zlib1g:i386 && \
+    apt-get update -y && \
+    apt-get install -y libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 && \
+    apt-get install -y --no-install-recommends openjdk-8-jdk && \
+    apt-get install -y git wget zip && \
+    apt-get install -y qt5-default
 
-    # Installs Android SDK
-    mkdir android && cd android && \
-    wget -O tools.zip ${ANDROID_SDK_URL} && \
-    unzip tools.zip && rm tools.zip && \
-    
-    echo y | android update sdk --no-ui --all --filter "${ANDROID_COMPONENTS}" ; \
-    echo y | android update sdk --no-ui --all --filter "${GOOGLE_COMPONENTS}" && \
-    
-    chmod a+x -R $ANDROID_HOME && \
-    chown -R root:root $ANDROID_HOME
+# download and install Gradle
+# https://services.gradle.org/distributions/
+ENV GRADLE_VERSION 4.10.3
+RUN cd /opt && \
+    wget -q https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
+    unzip gradle*.zip && \
+    ls -d */ | sed 's/\/*$//g' | xargs -I{} mv {} gradle && \
+    rm gradle*.zip
 
-# Install Fastlane
+# download and install Kotlin compiler
+# https://github.com/JetBrains/kotlin/releases/latest
+ENV KOTLIN_VERSION 1.3.11
+RUN cd /opt && \
+    wget -q https://github.com/JetBrains/kotlin/releases/download/v${KOTLIN_VERSION}/kotlin-compiler-${KOTLIN_VERSION}.zip && \
+    unzip *kotlin*.zip && \
+    rm *kotlin*.zip
 
-RUN apt-get install -y build-essential && \
-    apt-get install -y ruby-dev && \    
-    gem install fastlane -NV -v ${FASTLANE_VERSION} && \
-    
+# download and install Android SDK
+# https://developer.android.com/studio/#downloads
+ENV ANDROID_SDK_VERSION 4333796
+RUN mkdir -p /opt/android-sdk && cd /opt/android-sdk && \
+    wget -q https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_VERSION}.zip && \
+    unzip *tools*linux*.zip && \
+    rm *tools*linux*.zip
 
-# Clean up
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    apt-get purge -y --auto-remove $buildDeps && \
-    apt-get autoremove -y && apt-get clean
+# set the environment variables
+ENV LANG en_US.UTF-8
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+ENV GRADLE_HOME /opt/gradle
+ENV KOTLIN_HOME /opt/kotlinc
+ENV ANDROID_HOME /opt/android-sdk
+ENV PATH ${PATH}:${GRADLE_HOME}/bin:${KOTLIN_HOME}/bin:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools/bin
+ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+
+# accept the license agreements of the SDK components
+ADD license_accepter.sh /opt/
+RUN /opt/license_accepter.sh $ANDROID_HOME
