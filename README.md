@@ -3,15 +3,12 @@
 
 [![Docker Automated buil](https://img.shields.io/docker/automated/mikangali/android.svg)](https://hub.docker.com/r/mikangali/android)
 
-### Android 7 (SDK 25.X)
+### Android (SDK tools)
 
-- Ant 1.9.6
-- Maven 3.3.9
-- Java 1.8.0_111
-- Gradle 2.10 (Groovy 2.4.5)
-- Android SDK 24.4.1
-    + APIs: android-10,android-15,android-19,android-21,...,android-25
-    + Build-Tools: 25.0.2
+- Koltin 1.3.11
+- Gradle 4.10.3
+- Java openjdk-8-jdk
+- Android SDK 4333796
 
 ----
 ### Pull from Docker Hub
@@ -30,10 +27,14 @@ docker run -it mikangali/android bash
 ```
 
 ### Use as base image
+
 ```Dockerfile
 FROM mikangali/android:latest
+
+...
+
 ```
 
 ### Links
 
-Inspired by : https://github.com/beevelop/docker-android
+* Inspired by : https://github.com/thyrlian/AndroidSDK
