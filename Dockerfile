@@ -15,7 +15,9 @@ RUN dpkg --add-architecture i386 && \
     apt-get install -y libncurses5:i386 libc6:i386 libstdc++6:i386 lib32gcc1 lib32ncurses5 lib32z1 zlib1g:i386 && \
     apt-get install -y --no-install-recommends openjdk-8-jdk && \
     apt-get install -y git wget zip && \
-    apt-get install -y qt5-default
+    apt-get install -y qt5-default && \
+    apt-get install -y locales && \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 # download and install Gradle
 # https://services.gradle.org/distributions/
