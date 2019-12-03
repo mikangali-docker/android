@@ -10,18 +10,20 @@
 - Java openjdk-8-jdk
 - Android SDK 4333796
 
-----
 ### Pull from Docker Hub
+
 ```
 docker pull mikangali/android:latest
 ```
 
 ### Build from GitHub
+
 ```
 docker build -t mikangali/android github.com/mikangali-docker/android
 ```
 
 ### Run image
+
 ```
 docker run -it mikangali/android bash
 ```

@@ -1,6 +1,8 @@
 # Android sdk image
 # Inspired by - https://github.com/thyrlian/AndroidSDK
 
+# TODO: Update to ubuntu:18.04 -https://gitlab.com/hardysim/android-ci/blob/master/Dockerfile
+
 FROM ubuntu:16.04
 
 # Author
@@ -52,7 +54,10 @@ ENV KOTLIN_HOME /opt/kotlinc
 ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${GRADLE_HOME}/bin:${KOTLIN_HOME}/bin:${ANDROID_HOME}/emulator:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools/bin
 ENV _JAVA_OPTIONS -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+ENV VERSION_BUILD_TOOLS "27.0.3"
 
-# accept the license agreements of the SDK components
-ADD license_accepter.sh /opt/
-RUN /opt/license_accepter.sh $ANDROID_HOME
+# Accept Licenses
+# https://stackoverflow.com/a/45782695/2170109
+RUN yes | sdkmanager --licenses
+
+RUN sdkmanager "build-tools;${VERSION_BUILD_TOOLS}"
