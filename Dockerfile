@@ -60,8 +60,4 @@ ENV VERSION_BUILD_TOOLS "27.0.3"
 # https://stackoverflow.com/a/45782695/2170109
 RUN yes | sdkmanager --licenses
 
-# fix android build : "No installed build tools found"
-# https://stackoverflow.com/questions/31190355/ionic-build-android-error-no-installed-build-tools-found-please-install-the
-RUN mkdir ~/.android/ && touch ~/.android/repositories.cfg
-
 RUN sdkmanager "build-tools;${VERSION_BUILD_TOOLS}"
